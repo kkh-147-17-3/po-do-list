@@ -1,0 +1,17 @@
+
+spring:
+    profiles.active: dev
+    datasource:
+        driver-class-name: org.mariadb.jdbc.Driver
+        url: ${DB_URL}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+    output:
+        ansi.enabled: always
+    jackson.time-zone: Asia/Seoul
+    config:
+        import: .env.properties
+
+# mybatis:
+#     type-aliases-package:
+#     mapper-locations: classpath*:mapper/*Mapper.xml
