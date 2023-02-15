@@ -11,7 +11,14 @@ spring:
     jackson.time-zone: Asia/Seoul
     config:
         import: .env.properties
-
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                show_sql: true
+                format_sql: true
+                use_sql_comments: true
 # mybatis:
 #     type-aliases-package:
 #     mapper-locations: classpath*:mapper/*Mapper.xml

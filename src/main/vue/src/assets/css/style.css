@@ -1,0 +1,51 @@
+@font-face {
+    font-family: 'Happiness-Sans-Title';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2205@1.0/Happiness-Sans-Title.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'HallymGothic-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2204@1.0/HallymGothic-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+:root {
+    /* Font weight */
+    --extra-bold: 800;
+    --bold: 700;
+    --semi-bold: 600;
+    --medium: 500;
+    --regular: 400;
+  
+    --activate: #81d051;
+    --red-theme: #ff4f4f;
+    --orange-theme: #ffbc59;
+    --main-color: #62b3b9;
+    --white: #ffffff;
+    --modal-white: #fbfbfd;
+    --tiffany-blue: #76c1b1;
+    --true-blue: #177dd7;
+    --light-grey1: #ebebeb;
+    --light-grey2: #c4c4c4;
+    --grey1: #a5a5a5;
+    --grey2: #8b8b8b;
+    --grey3: #6f6f6f;
+    --grey4: #4f4c4c;
+    --dark-grey1: #3c3c3c;
+    --dark-grey2: #333333;
+    --black: #000;
+    --admin-white: white;
+    --admin-icon-theme: #4f4c4c;
+    --admin-loyal-blue: #1d4683;
+    --admin-grey: #4f5661;
+    --error-red: #ff4f4f;
+  }
+  
+
+
+*{
+    font-family: 'HallymGothic-Regular';
+}
