@@ -1,6 +1,6 @@
 <template>
-        <div class="select-modal">
-            <div v-for="(item, index) in data" 
+        <div class="date-container">
+            <div v-for="(item, index) in data" class="date-item"
                 :key="index"
                 @click="dateClickHandler(item)">
             {{ item.name }}
@@ -29,14 +29,27 @@ const data: Array<DateCategory> = [
 
 function dateClickHandler(item:DateCategory){
     const date = new Date();
-    date.setHours(9,0,0);
+    date.setHours(18,0,0);
     date.setDate(date.getDate() + item.day);
-    console.log(date);
     emits('dateSelected', date);
 }
 
 </script>
 
 <style scoped>
+.date-container{
+    display:flex;
+    flex-wrap: wrap;
+    row-gap:10px;
+}
 
+.date-item{
+    background-color: var(--true-blue);
+    margin: 0 5px;
+    border-radius: 5px;
+    padding: 5px 8px;
+    color:white;
+    cursor: pointer;
+    font-size:12px;
+}
 </style>

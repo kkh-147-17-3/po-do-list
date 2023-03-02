@@ -1,16 +1,4 @@
-@font-face {
-    font-family: 'Happiness-Sans-Title';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2205@1.0/Happiness-Sans-Title.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'HallymGothic-Regular';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2204@1.0/HallymGothic-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
 
 :root {
     /* Font weight */
@@ -47,5 +35,5 @@
 
 
 *{
-    font-family: 'HallymGothic-Regular';
+    font-family: 'Noto Sans KR', sans-serif;
 }

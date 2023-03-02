@@ -22,12 +22,15 @@
                 </tr>
                 <tr v-for="(week, wIndex) in datePicker.dateInMonth" :key="wIndex" @click="selectDay">
                     <td v-for="(day, dIndex) in week" :key="dIndex" :class="{ holiday: day.isHoliday, selected: day.isSelected }">
-                        {{ day.value !== "0" ? day.value : "" }}
+                        <div> {{ day.value !== "0" ? day.value : "" }} </div>
+                        <div> {{ getDayExp(day.value) }} </div>
                     </td>
                 </tr>
             </table>
             <div :class="{ 'loader': !datePicker.isLoaded }"></div>
         </div>
+        <date-selector 
+            @dateSelected="dateSelectedHandler"/>
         <div class="datepicker-buttons">
             <button type="button" class="btn btn-semiround" @click="closeDatepicker">취소</button>
             <button type="button" class="btn btn-action btn-semiround" @click="submitDate">확인</button>
@@ -37,6 +40,7 @@
 
 <script lang="ts" setup>
 import { ref,reactive } from "@vue/runtime-core";
+import DateSelector from "@/components/DateSelector.vue";
 const emit = defineEmits(['closeDatepicker','submitDate']);
 
 const closeDatepicker = () => {
@@ -338,6 +342,35 @@ const increaseMonth = () => {
 
 const errorMessage = ref("");
 
+const getDayExp = (day:string) => {
+    const date = new Date();
+    date.setFullYear(datePicker.currentYear, datePicker.currentMonth - 1, parseInt(day));
+
+    const today = new Date();
+    let result = ""
+    switch (getDateDiff(date, today)) {
+        case 0:
+        result= "오늘"
+            break;
+        case 1: 
+        result= "내일"
+            break;
+        case 2:
+        result="모레"
+            break;
+        case 7:
+        result="한 주 뒤"
+            break;
+        case 30:
+        result="한 달 뒤"
+            break;
+        default:
+        result=""
+            break;
+    }
+    return result;
+}
+
 const submitDate = () => {
     try{
         const formattedDate = datePicker.getFormattedDate();
@@ -353,11 +386,42 @@ const submitDate = () => {
     }
 }
 
+const getDateDiff = (d1:Date, d2:Date) => {
+  
+  const diffDate = d1.getTime() - d2.getTime();
+  
+  return (diffDate / (1000 * 60 * 60 * 24)); // 밀리세컨 * 초 * 분 * 시 = 일
+}
+
+const dateSelectedHandler = (date :Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    datePicker.selectedDate = {
+        year,
+        month,
+        day,
+    }    
+    const formattedDate = datePicker.getFormattedDate();
+    const data = {
+            formattedDate : formattedDate,
+            dateInfo : datePicker.selectedDate,
+    }
+
+    emit('submitDate', data);
+    emit('closeDatepicker');
+}
+
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .month-year{
     position:relative;
+}
+
+.select-modal{
+    width:400px;
 }
 
 .select-modal .month-year-selector {
@@ -439,7 +503,7 @@ const submitDate = () => {
 
 .select-modal table td {
     text-align: center;
-    width: 2rem;
+    width: 5rem;
     height: 2rem;
     cursor:pointer;
 }
@@ -474,5 +538,15 @@ const submitDate = () => {
 
 .loader::before{
     font-size:5px;
+}
+
+tr{
+    td{
+        div:nth-child(2){
+            height:15px;
+            margin-bottom: 10px;
+            font-size:8px;
+        }
+    }
 }
 </style>

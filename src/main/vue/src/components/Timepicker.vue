@@ -1,16 +1,15 @@
 <template>
     <div class="timepicker select-modal">
-        <div class="timepicker__indicator">
-            <label for="">시간</label>
-            <input class="input" type="text" name="" id="" placeholder="시간을 선택해주세요" :value="showSelectedTime" readonly>
-        </div>
         <div class="timepicker__hour-minute">
             <ul @click="selectAmPm" class="am-pm">
                 <li :class="{ selected: times.amPm[0].isSelected }"> {{ times.amPm[0].value }} </li>
                 <li :class="{ selected: times.amPm[1].isSelected }">{{ times.amPm[1].value }}</li>
             </ul>
-            <ul @click="selectHour" class="hour">
-                <li v-for="(hour, index) in times.hours" :key="index" :class="{ selected: hour.isSelected }"> {{
+            <ul class="hour">
+                <li v-for="(hour, index) in times.hours" 
+                :key="index" 
+                :class="{ selected: hour.isSelected }"
+                @click="selectHour(index)" > {{
                     hour.value
                 }} </li>
             </ul>
@@ -27,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive,computed } from 'vue';
+import { computed, reactive, watch } from 'vue';
 
 export interface Time {
     value: string,
@@ -57,7 +56,7 @@ if (taskTime){
     let valueHour = taskTime.getHours()
     let valueMinute = taskTime.getMinutes();
     let isValueAm = valueHour >= 12 ? false : true;
-    valueHour = valueHour >= 12 ? valueHour - 12 : valueHour;
+    valueHour = valueHour > 12 ? valueHour - 12 : valueHour;
 
     currSelected.isAm = isValueAm;
     currSelected.hour = valueHour;
@@ -78,16 +77,16 @@ const times:{
 
 function initHour() {
     times.hours.length = 0;
-    for (let i = 0; i < 12; i++){
-        let hour = (i+1);
+    const startHour = (currSelected.isAm) ? 0 : 1;
+    const endHour = (currSelected.isAm) ? 11 : 12;
+    for (let i = startHour; i <= endHour; i++){
+        let hour = (i);
         let hourStr = hour < 10 ? `0${hour}` : hour.toString();
         times.hours.push({
             value : hourStr,
             isSelected : false,
         });
     }
-    times.hours[currSelected.hour-1].isSelected = true;
-
 }
 
 function initMinute(){
@@ -139,12 +138,11 @@ function selectAmPm(e:Event){
     initAmPm();
 }
 
-function selectHour(e:Event){
-    const eventTarget = e.target as HTMLElement;
-    let value = parseInt(eventTarget.innerText);
-    times.hours[value-1].isSelected = true;
-    currSelected.hour = value;
+function selectHour(index:number){
+    let value = times.hours[index].value;
+    currSelected.hour = parseInt(value);
     initHour();
+    times.hours[index].isSelected = true;
 }
 
 function selectMinute(e:Event){
@@ -184,10 +182,13 @@ function closeDatepicker(){
 }
 
 function submitTime(){
+    console.log(currSelected);
     emits('submit',currSelected);
 }
 
-
+watch(()=>currSelected.isAm, () => {
+    initHour();
+})
 
 </script>
 
