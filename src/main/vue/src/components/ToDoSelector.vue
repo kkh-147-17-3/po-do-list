@@ -1,20 +1,22 @@
 <template>
     <div class="select-modal">
         <Transition name="parent">
-            <div class="parent" v-show="currSelected.parent === null">
-                <div v-for="(item, index) in parent" 
-                    :key="index"
-                    @click="parentClickHandler(item)">
+            <div class="parent" v-show="categories.isParentLoaded">
+                <div v-for="(item, index) in categories.parent" 
+                :key="index"
+                @click="parentClickHandler(item)">
+                <v-img width="100" :src="(item.imageUrl) ? `/image/category/${item.imageUrl}` : `/image/category/beer.png` "></v-img>
                     {{ item.name }}
                 </div>
-            <div>직접입력</div>
+            <div>직접입력</div>     
         </div>
         </Transition>
         <Transition name="child">
-            <div class="child" v-show="currSelected.parent !== null">
-                <div v-for="(item, index) in child" 
+            <div class="child" v-show="categories.isChildLoaded">
+                <div v-for="(item, index) in categories.child" 
                     :key="index"
                     @click="childClickHandler(item)">
+                    <v-img width="100px" :src="(item.imageUrl) ? `/image/category/${item.imageUrl}` : `/image/category/beer.png` "></v-img>
                     {{ item.name }}
                 </div>
                 <div>직접입력</div>
@@ -32,6 +34,7 @@ import {ref, reactive, watch} from 'vue';
 export interface Category {
     id:number,
     name:string,
+    imageUrl:string,
 }
 
 export interface CurrSelected{
@@ -41,26 +44,38 @@ export interface CurrSelected{
 
 const props = defineProps(['opened']);
 
+const parent:Array<Category> = [];
+const child: Array<Category> = [];
 
+const categories = reactive({
+    parent,
+    isParentLoaded: false,
+    child,
+    isChildLoaded:false,
+})
 
+function initParent() {
+    fetch('/api/category/parent')
+    .then(res=>res.json())
+    .then((data:Array<Category>) =>{
+        data.forEach(category=>parent.push(category));
+        categories.isParentLoaded = true;
+    })
+}
+initParent();
 
-const parent = [
-    { id:1, name:"회사" },
-    { id:2, name:"집" },
-    { id:3, name:"장보기" },
-    { id:4, name:"쇼핑" },
-    { id:5, name:"육아" },
-    { id:6, name:"은행" },
-]
+function initChild(id: number) {
+    fetch('/api/category/child?' + new URLSearchParams({
+        parentId: id.toString()
+    }))
+    .then(res=>res.json())
+    .then((data:Array<Category>) =>{
+        data.forEach(category=>child.push(category));
+        categories.isParentLoaded=false;
+        categories.isChildLoaded=true;
+    })
+}
 
-const child: Array<Category> = [
-    { id:1, name:"회사" },
-    { id:2, name:"집" },
-    { id:3, name:"장보기" },
-    { id:4, name:"쇼핑" },
-    { id:5, name:"육아" },
-    { id:6, name:"은행" },
-];
 
 const currSelected: CurrSelected = reactive({
     parent: null,
@@ -79,10 +94,9 @@ const childClickHandler = (item:Category) =>{
     emits('todoSelected', currSelected);
 }
 
-watch(props.opened, ()=>{
-    if(props.opened){
-        currSelected.parent = null;
-        currSelected.child = null;
+watch(currSelected,()=>{
+    if(currSelected.parent){
+        initChild(currSelected.parent.id);
     }
 })
 
@@ -116,5 +130,14 @@ watch(props.opened, ()=>{
     height:400px; 
     display:flex; 
     overflow-x:hidden;
+}
+
+.parent, .child{
+    display:flex;
+    flex-wrap: wrap;
+}
+
+.child{
+    display:flex;
 }
 </style>
