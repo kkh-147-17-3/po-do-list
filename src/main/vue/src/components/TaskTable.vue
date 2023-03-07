@@ -1,7 +1,7 @@
 <template>
     <div class="btn-container">
-        <button class="delete-btn" @click="showDeleteCheckboxes">삭제</button>
-        <button v-show="checkDeletedOn" @click="deleteBtnHandler">삭제하기</button>
+        <v-btn variant="flat" color="primary" rounded="10" size="small" class="delete-btn" @click="showDeleteCheckboxes">{{ (checkDeletedOn)? "취소" : "삭제" }}</v-btn>
+        <v-btn variant="flat" color="secondary" size="small" v-show="checkDeletedOn" @click="deleteBtnHandler">삭제하기</v-btn>
         <div class="datepicker-btn">
             <v-btn flat >
             <v-icon icon="mdi-triangle-small-down" size="x-large"></v-icon>
@@ -19,12 +19,14 @@
                 </v-menu>
             </v-btn>
         </div>
-        <div>
-            {{tasks.length === 0 ? '오늘 뭘 해볼까요?' : `할 일 ${tasks.length}개 중에서 ${completedTasksNum} 개 했어요.` }}
-        </div>
+        <transition>
+            <div class="remain-tasks" v-show="!checkDeletedOn">
+                {{tasks.length === 0 ? '오늘 뭘 해볼까요?' : `${completedTasksNum} / ${tasks.length}` }}
+            </div>
+        </transition>
     </div>
     
-    <v-table class="task-table">
+    <v-table class="task-table" density="comfortable">
         <thead>
             <tr>
                 <td v-show="checkDeletedOn">
@@ -361,16 +363,43 @@ function deleteBtnHandler() {
 
 <style lang="scss" scoped>
 .task-table{
-    border-collapse: collapse;
+    border-collapse:collapse;
     min-height:500px;
+
+    thead{ 
+        border-style:none;
+        border-spacing: 0px;
+
+        tr {
+            td:nth-child(2){
+                border-top-left-radius: 5px;
+            }
+            td:last-child{
+                border-top-right-radius: 5px;
+            }
+        }
+    }
+
+
     td{
-        border:1px solid;
+        border:0.3px solid rgba(128, 128, 128, 0.209);
         transition: all 1s;
         &:first-child{
-            width:200px;
+            width:20px;
+            margin:0 !important;
+            padding:none !important;
         }
         &:nth-child(2){
-            width:300px;
+            width:80px;
+        }
+        &:nth-child(3){
+            width:80px;
+        }
+        &:nth-child(4){
+            width:80px;
+        }
+        &:nth-child(5){
+            width:80px;
         }
     }
     .memo{
@@ -386,14 +415,21 @@ function deleteBtnHandler() {
         }
     }
 }
+@media (max-width: 576px) {
+    *{
+        font-size:12px;
+    }
+}
+
+
+.delete-btn{
+    margin-right:10px;
+}
 
 .btn-container{
     display:flex;
-    // justify-content: center;
-}
-
-.delete-btn{
-    // justify-self: flex-start;
+    align-items:center;
+    margin-bottom: 10px;
 }
 
 .datepicker-btn{
@@ -446,9 +482,9 @@ tbody > tr > td:nth-child(4):hover {
 
 input[type='checkbox']{
     appearance: none;
-    border: 2.2px solid var(--true-blue);
-    width: 20px;
-    height: 20px;
+    border: 1.5px solid var(--true-blue);
+    width: 15px;
+    height: 15px;
     border-radius: 4px;
     z-index:999;
 }
@@ -462,9 +498,9 @@ input[type='checkbox']:checked + label{
     display: inline-block;
     background-image:url('@/assets/image/check.svg');
     content: "";
-    width:35px;
-    height:35px;
-    transform:translate(calc(-50% - 7px),calc(-50% + 5px));
+    width:30px;
+    height:30px;
+    transform:translate(calc(-50% - 5px),calc(-50% + 3px));
     // z-index:0;
 }
 
@@ -477,5 +513,20 @@ tbody > tr:last-child > td > button{
     height: 30px;
     margin: auto auto;
     background-image:url('@/assets/image/circle-plus.svg')
+}
+
+.remain-tasks{
+    font-size:12px;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    transform:translateX(30px);
+    opacity: 0;
 }
 </style>
